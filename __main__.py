@@ -1,10 +1,34 @@
 from parser_net import parser_net_func
-#import parser_web
-import packege_class
+from parser_web import parcer_web_brother, check_web_conection
+from packege_class import net_packege_printer
 
-def main():
+def write_file_printer_list():
+    size = len(printers_list)
+    if size <= 0: 
+        print("printer list has size 0") 
+        return -2
+    
+    try: 
+        file_printer_list = open('printer list.data', 'w', 1, 'UTF-8')
+    except OSError as e: 
+        print ("Cant create printer list.data")
+        return -1
+    
+    for i in range(size):
+        file_printer_list.write(printers_list[i].get_string_to_write() + '\n')
+        pass
+    
+    file_printer_list.close()
+    pass
+
+def initialization():
+    global ip_net
+    global mac_list
+    global printers_list
+
     ip_net = '127.1.1.'
     mac_list = []
+    printers_list = []
 
     try:
         conf_file = open('config.conf', 'r', 1, 'UTF-8')
@@ -36,12 +60,21 @@ def main():
     mac_separator_of_conf(index_mac, 1)
     print (mac_list)
 
-    parser_net_func(ip_net, mac_list)
+    printers_list = parser_net_func(ip_net, mac_list)
 
+    for i in range(len(printers_list)):
+        if printers_list[i].get_mac().find(mac_list[0]) != -1:
+            printers_list[i].add_toner = parcer_web_brother(printers_list[i])
+            pass
+        printers_list[i].print_packege()
+        pass
+    
+    write_file_printer_list()
     pass
 
 if __name__ == '__main__':
     
-    main()
+    initialization()
+
 
     pass

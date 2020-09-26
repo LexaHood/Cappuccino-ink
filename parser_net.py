@@ -2,7 +2,7 @@ import threading
 #import time
 import subprocess
 from threading import Thread
-import packege_class
+from packege_class import net_packege_printer
 
 #start_time = time.time() #запомниаем когда запустилась программа
 #mac_printer_list = [] #Список мак адресов производителей принтеров
@@ -28,12 +28,12 @@ def parser_net_func (ip, mac_printer_list):
     list_printers = [] #создаем лист под найденные адреса принтеров в сети
     length_mac_lsit = len(mac_printer_list) #узнаем колличесво мак адресов производителей
 
-    try:
-        file = open("printer list.conf", "w", 1 , "UTF-8") #открываем файл для записи
-    except OSError as e:
-        print ('unable to create file to write found printers')
-        return 2
-        pass
+    # try:
+    #     file = open("printer list.conf", "w", 1 , "UTF-8") #открываем файл для записи
+    # except OSError as e:
+    #     print ('unable to create file to write found printers')
+    #     return 2
+    #     pass
     
 
     def thread_function(start_adress, end_adress): #основная функция всей обработки, скомпонована для более простым управлением потока
@@ -42,7 +42,7 @@ def parser_net_func (ip, mac_printer_list):
             mac_adress = delimiter_mac_address(ip + str(adress)) #получаем мак по заданному ip
             res = check_mac(mac_adress, mac_printer_list, length_mac_lsit) #проверяем принадлежит ли мак адрес нужному производителю
             if res == True:
-                list_printers.append(packege_class.net_packege(ip + str(adress), mac_adress)) #записываем айпи и мак адрес принтера в массив
+                list_printers.append(net_packege_printer(ip + str(adress), mac_adress)) #записываем айпи и мак адрес принтера в массив
             pass
         pass
     
@@ -65,21 +65,22 @@ def parser_net_func (ip, mac_printer_list):
 
     thread_launcher()
 
-    size = len(list_printers) 
-    #print (size)
-    if size != 0:
-        for i in range (size): #записываем все найденные принтеры в файл
-            list_printers[i].print_packege()
-            file.writelines(list_printers[i].get_string_to_write() + '\n')
-            pass
-        pass
-    else: 
-        print ("printers not founded") #если list_printers пустой, значит мы ничего не нашли
-        print ("printers either are not present in the local network, or the poppy address is not entered in the search base")
+    # size = len(list_printers) 
+    # #print (size)
+    # if size != 0:
+    #     for i in range (size): #записываем все найденные принтеры в файл
+    #         list_printers[i].print_packege()
+    #         file.writelines(list_printers[i].get_string_to_write() + '\n')
+    #         pass
+    #     pass
+    # else: 
+    #     print ("printers not founded") #если list_printers пустой, значит мы ничего не нашли
+    #     print ("printers either are not present in the local network, or the poppy address is not entered in the search base")
+    #     return -1
 
 
-    file.close()
-    pass
+    #file.close()
 
+    return list_printers
 
 #print("--- %s second ---" % (time.time() - start_time)) #выводим время за которое выполнилась программа
